@@ -1,0 +1,953 @@
+[
+    {
+        "id": "a8193508.52fbd8",
+        "type": "tab",
+        "label": "Pool Control V1.09",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "8a4ad0c8.d3b0a",
+        "type": "mytimeout",
+        "z": "a8193508.52fbd8",
+        "name": "Count Down Timer",
+        "outtopic": "TimerCountDown",
+        "outsafe": "on",
+        "outwarning": "",
+        "outunsafe": "off",
+        "warning": "",
+        "timer": "10800",
+        "debug": false,
+        "ndebug": false,
+        "ignoreCase": true,
+        "repeat": false,
+        "again": false,
+        "x": 390,
+        "y": 660,
+        "wires": [
+            [],
+            [
+                "9f209aef.38c758",
+                "ecb6bf56.dea75"
+            ]
+        ]
+    },
+    {
+        "id": "9f5ed287.ec57f",
+        "type": "function",
+        "z": "a8193508.52fbd8",
+        "name": "Create JSON",
+        "func": "var timeout = flow.get(\"TimeRemainPool\");\n\nvar value = msg.payload; //value will equal pool pump status\n\n            if  (value === true){\n            msg.payload = {\"payload\": \"on\", timeout, \"warning\": 0}; \n            return [msg];\n            }\n            \n            else {\n            msg.payload = \"stop\"; \n            return [msg];\n                }\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 170,
+        "y": 660,
+        "wires": [
+            [
+                "8a4ad0c8.d3b0a"
+            ]
+        ]
+    },
+    {
+        "id": "7f301e33.ebd37",
+        "type": "ui_text",
+        "z": "a8193508.52fbd8",
+        "group": "fad07ad1.a0beb8",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "Pool Time Remaining",
+        "label": "Pool Time Remaining:",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1260,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "3562f757.193228",
+        "type": "inject",
+        "z": "a8193508.52fbd8",
+        "name": "Daily Pump Trigger",
+        "topic": "",
+        "payload": "DailyPumpTime",
+        "payloadType": "flow",
+        "repeat": "",
+        "crontab": "01 00 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 180,
+        "y": 880,
+        "wires": [
+            [
+                "e229cff6.0997d"
+            ]
+        ]
+    },
+    {
+        "id": "e229cff6.0997d",
+        "type": "function",
+        "z": "a8193508.52fbd8",
+        "name": "Update day's target",
+        "func": "var DailyPumpTime = msg.payload; //\nvar TimeRemainPoolYest = +(flow.get(\"TimeRemainPool\")) || 0;\nvar TimeRemainPoolStart = 0;\nTimeRemainPoolStart = TimeRemainPoolYest + DailyPumpTime;\nflow.set(\"TimeRemainPoolStart\",TimeRemainPoolStart);\nmsg.payload = TimeRemainPoolStart;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 490,
+        "y": 880,
+        "wires": [
+            [
+                "d220be39.97497",
+                "1f5f4bc2.26dd44"
+            ]
+        ]
+    },
+    {
+        "id": "c3bfbbd.2a2ac48",
+        "type": "ui_text",
+        "z": "a8193508.52fbd8",
+        "group": "fad07ad1.a0beb8",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "ADVANCED SETTINGS",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "x": 130,
+        "y": 1100,
+        "wires": []
+    },
+    {
+        "id": "d545acd7.85b7b",
+        "type": "ui_dropdown",
+        "z": "a8193508.52fbd8",
+        "name": "Pool Time Remaining Override",
+        "label": "Time Remaining Override",
+        "place": "0",
+        "group": "fad07ad1.a0beb8",
+        "order": 6,
+        "width": "0",
+        "height": "0",
+        "passthru": false,
+        "options": [
+            {
+                "label": "0",
+                "value": 0,
+                "type": "num"
+            },
+            {
+                "label": "5 Min",
+                "value": 300,
+                "type": "num"
+            },
+            {
+                "label": " 10 Min",
+                "value": 600,
+                "type": "num"
+            },
+            {
+                "label": "0.5  Hour",
+                "value": 1800,
+                "type": "num"
+            },
+            {
+                "label": "1 Hour",
+                "value": 3600,
+                "type": "num"
+            },
+            {
+                "label": "2 Hours",
+                "value": 7200,
+                "type": "num"
+            },
+            {
+                "label": "3 Hours",
+                "value": 10800,
+                "type": "num"
+            },
+            {
+                "label": "4 Hours",
+                "value": 14400,
+                "type": "num"
+            },
+            {
+                "label": "5 Hours",
+                "value": 18000,
+                "type": "num"
+            },
+            {
+                "label": "6 Hours",
+                "value": 21600,
+                "type": "num"
+            },
+            {
+                "label": "7 Hours",
+                "value": 25200,
+                "type": "num"
+            },
+            {
+                "label": "8 Hours",
+                "value": 28800,
+                "type": "num"
+            }
+        ],
+        "payload": "",
+        "topic": "",
+        "x": 190,
+        "y": 780,
+        "wires": [
+            [
+                "d220be39.97497"
+            ]
+        ]
+    },
+    {
+        "id": "535d6312.1152bc",
+        "type": "ui_dropdown",
+        "z": "a8193508.52fbd8",
+        "name": "Daily Pump Time",
+        "label": "Daily Pump Time",
+        "place": "0",
+        "group": "fad07ad1.a0beb8",
+        "order": 7,
+        "width": "0",
+        "height": "0",
+        "passthru": false,
+        "options": [
+            {
+                "label": "0",
+                "value": 0,
+                "type": "num"
+            },
+            {
+                "label": " 10 Minutes",
+                "value": 600,
+                "type": "num"
+            },
+            {
+                "label": "0.5  Hour",
+                "value": 1800,
+                "type": "num"
+            },
+            {
+                "label": "1 Hour",
+                "value": 3600,
+                "type": "num"
+            },
+            {
+                "label": "2 Hours",
+                "value": 7200,
+                "type": "num"
+            },
+            {
+                "label": "3 Hours",
+                "value": 10800,
+                "type": "num"
+            },
+            {
+                "label": "4 Hours",
+                "value": 14400,
+                "type": "num"
+            },
+            {
+                "label": "5 Hours",
+                "value": 18000,
+                "type": "num"
+            },
+            {
+                "label": "6 Hours",
+                "value": 21600,
+                "type": "num"
+            },
+            {
+                "label": "7 Hours",
+                "value": 25200,
+                "type": "num"
+            },
+            {
+                "label": "8 Hours",
+                "value": 28800,
+                "type": "num"
+            }
+        ],
+        "payload": "",
+        "topic": "",
+        "x": 350,
+        "y": 1020,
+        "wires": [
+            [
+                "e54be847.25ecc8"
+            ]
+        ]
+    },
+    {
+        "id": "e54be847.25ecc8",
+        "type": "change",
+        "z": "a8193508.52fbd8",
+        "name": "Set Daily Pump Time",
+        "rules": [
+            {
+                "t": "set",
+                "p": "DailyPumpTime",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 655,
+        "y": 1019,
+        "wires": [
+            [
+                "a03a4fde.88591"
+            ]
+        ]
+    },
+    {
+        "id": "a03a4fde.88591",
+        "type": "debug",
+        "z": "a8193508.52fbd8",
+        "name": "Daily Pump TIme",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 925,
+        "y": 1019,
+        "wires": []
+    },
+    {
+        "id": "3f9d4ba.4093eb4",
+        "type": "function",
+        "z": "a8193508.52fbd8",
+        "name": "Main Logic",
+        "func": "var PoolAuto = global.get(\"PoolAuto\"); //Master control - allows manual over ride\n\nvar TimeRemainPool = flow.get(\"TimeRemainPool\");\nvar PoolPumpManual = flow.get(\"PoolPumpManual\");\n\nvar NetPowerW = global.get(\"NetPowerW\");\nvar NetPowerMin5 = global.get(\"NetPowerMin5\");\nvar NetPowerAvg3 = global.get(\"NetPowerAvg3\");\nvar PoolPumpStatus = global.get(\"PoolPumpStatus\");\nvar PoolW = 1000; //Amount of power required by pool pump\nvar PumpOnOffSet = 200; //Excess power required before pump will turn on\nvar PumpOffOffSet = -100; //Excess power required before pump will turn off. Typically a negative number\n//NetPowerPoolW assumes the pool pump is off. It is the estimated net power with the pool pump running, adjusted by the PowerThresholdW.\n\nvar NetPowerPoolW = 0;\nvar NetPowerAvg3PoolW = 0;\nNetPowerPoolW = NetPowerW - PoolW - PumpOnOffSet;\nNetPowerAvg3PoolW = NetPowerAvg3 - PoolW - PumpOffOffSet;\nNetPowerMin5PoolW = NetPowerMin5 - PoolW - PumpOffOffSet;\nvar msgcomment = \"\"; //descriptive output for debug\nvar msgdb = \"\"; //descriptive output for debug\n\n\nif (PoolAuto === \"on\") {\n        if (PoolPumpStatus === false) {\n            if  (NetPowerPoolW > 0 && NetPowerMin5PoolW > 0 && TimeRemainPool > 0){\n                msgcomment = { payload:\"Start Pump: Enough Power, Auto Mode, Pump Timer > 0\" };\n                msg.payload = \"on\";\n                return [msgcomment,msg];\n            }\n            \n            //Time finished\n            else if (NetPowerPoolW > 0 && NetPowerMin5PoolW > 0 && TimeRemainPool < 1){\n                msgcomment = { payload:\"Don't Start Pump: Time Finished, Auto Mode\" };\n                return [msgcomment];\n                }\n            //Assumes not enough power to start pump\n            else {\n                msgcomment = { payload:\"Don't Start Pump: Not Enough Power, Auto Mode\" };\n                return [msgcomment];\n                }\n        }\n            \n        //Assumes from here that pool pump is on\n        else if  ((NetPowerW - PumpOffOffSet) > 0 && PoolPumpStatus === true && TimeRemainPool > 0) {\n            msgcomment = { payload:\"Keep pool pump on, Auto Mode\" };\n            return [msgcomment];\n        }\n        \n\n        else if  ((NetPowerAvg3 - PumpOffOffSet) < 0 && PoolPumpStatus === true) {\n            msgcomment = { payload:\"Stop Pump, Not enough Power, Auto Mode\" };\n            msg.payload = \"off\";\n            return [msgcomment,msg];\n        }\n        \n        else if  (PoolPumpStatus === true && TimeRemainPool === 0) {\n            msgcomment = { payload:\"Stop Pump, Pump Timer finished, Auto Mode\" };\n            msg.payload = \"off\";\n            return [msgcomment,msg];\n        }\n    }\n    \n \n    else if  (PoolAuto === \"off\" && PoolPumpManual === \"off\" && PoolPumpStatus === true) {\n            msgcomment = { payload:\"Stop Pump, Auto Off, Manual Off\" };\n            msg.payload = \"off\";\n            return [msgcomment,msg];\n        }\n        \n    else if  (PoolAuto === \"off\" && PoolPumpManual === \"off\" && PoolPumpStatus === false) {\n            msgcomment = { payload:\"Don't Start Pump, Auto Off, Manual Off\" };\n            return [msgcomment];\n        }\n        \nelse if (PoolPumpManual === \"on\") {\n        if (PoolPumpStatus === false) {\n                msgcomment = { payload:\"start pool pump manual mode\" };\n                msg.payload = \"on\";\n                return [msgcomment,msg];\n            }\n            \n        //Assumes from here that pool pump is on\n        else {\n            msgcomment = { payload:\"Keep Pump On, Manual Mode\" };\n            return [msgcomment];\n        }\n    }",
+        "outputs": 2,
+        "noerr": 0,
+        "x": 390,
+        "y": 240,
+        "wires": [
+            [
+                "7c5680c5.f9fa2"
+            ],
+            [
+                "dc7d6b0f.523008",
+                "4da40a4a.d41474"
+            ]
+        ]
+    },
+    {
+        "id": "dc7d6b0f.523008",
+        "type": "debug",
+        "z": "a8193508.52fbd8",
+        "name": "Pool Pump Outbound",
+        "active": true,
+        "console": "false",
+        "complete": "payload",
+        "x": 1040,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "7c5680c5.f9fa2",
+        "type": "debug",
+        "z": "a8193508.52fbd8",
+        "name": "Pool Pump Comment",
+        "active": true,
+        "console": "false",
+        "complete": "payload",
+        "x": 1040,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "b092b821.4cfe48",
+        "type": "inject",
+        "z": "a8193508.52fbd8",
+        "name": "10 Second Trigger",
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "x": 150,
+        "y": 240,
+        "wires": [
+            [
+                "3f9d4ba.4093eb4"
+            ]
+        ]
+    },
+    {
+        "id": "4a2c721e.dadadc",
+        "type": "function",
+        "z": "a8193508.52fbd8",
+        "name": "Set PoolPumpStatus",
+        "func": "var value = msg.payload; //value will equal pool pump status\n\n            if  (value === true){\n            msg.payload = \"ON\";\n            global.set(\"PoolPumpStatus\",true);\n            return [msg];\n            }\n            \n            else {\n            msg.payload = \"OFF\";\n            global.set(\"PoolPumpStatus\",false);\n            return [msg];\n                }\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 780,
+        "y": 340,
+        "wires": [
+            [
+                "6e46bfb4.6734b",
+                "e88f2c01.64d71"
+            ]
+        ]
+    },
+    {
+        "id": "6e46bfb4.6734b",
+        "type": "debug",
+        "z": "a8193508.52fbd8",
+        "name": "Pool Pump Status",
+        "active": false,
+        "console": "false",
+        "complete": "payload",
+        "x": 1130,
+        "y": 334,
+        "wires": []
+    },
+    {
+        "id": "f2d914a9.428278",
+        "type": "function",
+        "z": "a8193508.52fbd8",
+        "name": "Chlorinator Match Pump",
+        "func": "var value = msg.payload; //value will equal pool pump status\nvar PoolAuto = global.get(\"PoolAuto\"); \nvar PoolPumpManual = flow.get(\"PoolPumpManual\");\n\n\n            if  (value === true && PoolAuto === \"on\" && PoolPumpManual === \"off\"){\n            msgcomment = { payload:\"Start Chlorinator\" };\n            msg.payload = \"ON\"; \n            return [msgcomment,msg];\n            }\n            \n            //Assumes pool pump must be off or in manual mode, so turn off chlorinator\n            else {\n                msgcomment = { payload:\"Stop Chlorinator\" };\n            msg.payload = \"OFF\"; \n            return [msgcomment,msg];\n                }\n",
+        "outputs": "2",
+        "noerr": 0,
+        "x": 810,
+        "y": 420,
+        "wires": [
+            [],
+            [
+                "feeaebac.4ae188",
+                "4d1622d1.10742c"
+            ]
+        ]
+    },
+    {
+        "id": "feeaebac.4ae188",
+        "type": "debug",
+        "z": "a8193508.52fbd8",
+        "name": "Chlorinator Outbound",
+        "active": true,
+        "console": "false",
+        "complete": "payload",
+        "x": 1100,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "4d1622d1.10742c",
+        "type": "mqtt out",
+        "z": "a8193508.52fbd8",
+        "name": "Chlorinator Message",
+        "topic": "chlorinator/button",
+        "qos": "1",
+        "retain": "false",
+        "broker": "46ae9f89.2d1cf",
+        "x": 1080,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "9890585c.7a0658",
+        "type": "sqlite",
+        "z": "a8193508.52fbd8",
+        "mydb": "7a9c073e.1ce2c8",
+        "name": "SensorData",
+        "x": 1090,
+        "y": 560,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "aaec0d34.df5b8",
+        "type": "function",
+        "z": "a8193508.52fbd8",
+        "name": "Save to DB",
+        "func": "var value = msg.payload; //value will equal pool pump status\nvar poolpump =\"\";\nvar sql = \"\";\nvar d = new Date();\nvar epoch = d.getTime();\nvar outputs = [];\n\n\tif  (value === true){\n\tpoolpump = \"1\";\n\tsql = \"INSERT INTO sensor_data (device,sensor,value,epoch) \" +\n        \"VALUES ('pool','pump',\"+poolpump+\",\"+epoch+\")\";\n    outputs.push({topic:sql}); \n\t}\n\t\n\telse if (value === false) {\n\tpoolpump = \"0\";\n\tsql = \"INSERT INTO sensor_data (device,sensor,value,epoch) \" +\n        \"VALUES ('pool','pump',\"+poolpump+\",\"+epoch+\")\";\n    outputs.push({topic:sql}); \n\t}    \n   \n    \n// Update the status with current timestamp\nvar now = new Date();\nvar yyyy = now.getFullYear();\nvar mm = now.getMonth() < 9 ? \"0\" + (now.getMonth() + 1) : (now.getMonth() + 1); // getMonth() is zero-based\nvar dd  = now.getDate() < 10 ? \"0\" + now.getDate() : now.getDate();\nvar hh = now.getHours() < 10 ? \"0\" + now.getHours() : now.getHours();\nvar mmm  = now.getMinutes() < 10 ? \"0\" + now.getMinutes() : now.getMinutes();\nvar ss  = now.getSeconds() < 10 ? \"0\" + now.getSeconds() : now.getSeconds();\nnode.status({fill:\"blue\",shape:\"ring\",text:\"Last update: \"+dd + \".\" + mm + \".\" + yyyy + \" \" + hh + \":\" + mmm + \":\" + ss});    \n      \nreturn [ outputs ];",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 890,
+        "y": 560,
+        "wires": [
+            [
+                "9890585c.7a0658"
+            ]
+        ]
+    },
+    {
+        "id": "4da40a4a.d41474",
+        "type": "hs100",
+        "z": "a8193508.52fbd8",
+        "name": "Pool Pump",
+        "host": "192.168.1.67",
+        "x": 390,
+        "y": 420,
+        "wires": [
+            [
+                "1dad22e2.14e29d",
+                "4a2c721e.dadadc",
+                "2dcdb611.e98f9a",
+                "f2d914a9.428278"
+            ]
+        ]
+    },
+    {
+        "id": "2402048f.d6f11c",
+        "type": "debug",
+        "z": "a8193508.52fbd8",
+        "name": "PoolAuto Global",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 1014,
+        "y": 29,
+        "wires": []
+    },
+    {
+        "id": "15a845de.e57c6a",
+        "type": "ui_switch",
+        "z": "a8193508.52fbd8",
+        "name": "Pool Pump (Manual)",
+        "label": "Pool Pump (Manual)",
+        "group": "fad07ad1.a0beb8",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "decouple": "false",
+        "topic": "PoolPumpManual",
+        "style": "",
+        "onvalue": "on",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "off",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "x": 300,
+        "y": 100,
+        "wires": [
+            [
+                "c17b66be.3b0c88"
+            ]
+        ]
+    },
+    {
+        "id": "c9d863b9.f7832",
+        "type": "debug",
+        "z": "a8193508.52fbd8",
+        "name": "Pool Pump Manual",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "complete": "payload",
+        "x": 1022,
+        "y": 92,
+        "wires": []
+    },
+    {
+        "id": "7f0b6b2e.cdd714",
+        "type": "inject",
+        "z": "a8193508.52fbd8",
+        "name": "Initial Only",
+        "topic": "powerstate",
+        "payload": "off",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.8",
+        "x": 130,
+        "y": 400,
+        "wires": [
+            [
+                "4da40a4a.d41474"
+            ]
+        ]
+    },
+    {
+        "id": "1d31a934.e17407",
+        "type": "inject",
+        "z": "a8193508.52fbd8",
+        "name": "Initial State",
+        "topic": "PoolPumpManual",
+        "payload": "off",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.5",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "15a845de.e57c6a",
+                "c17b66be.3b0c88"
+            ]
+        ]
+    },
+    {
+        "id": "c6729f23.2d07c",
+        "type": "inject",
+        "z": "a8193508.52fbd8",
+        "name": "Initial State",
+        "topic": "PoolAuto",
+        "payload": "on",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.5",
+        "x": 110,
+        "y": 60,
+        "wires": [
+            [
+                "b02004c.50382f8",
+                "3e73616.c46dc9e"
+            ]
+        ]
+    },
+    {
+        "id": "1dad22e2.14e29d",
+        "type": "rbe",
+        "z": "a8193508.52fbd8",
+        "name": "Change Only",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "property": "payload",
+        "x": 570,
+        "y": 440,
+        "wires": [
+            [
+                "aaec0d34.df5b8",
+                "9f5ed287.ec57f"
+            ]
+        ]
+    },
+    {
+        "id": "80d092d.9a3687",
+        "type": "inject",
+        "z": "a8193508.52fbd8",
+        "name": "Power Status",
+        "topic": "",
+        "payload": "powerstate",
+        "payloadType": "str",
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1.1",
+        "x": 140,
+        "y": 500,
+        "wires": [
+            [
+                "4da40a4a.d41474"
+            ]
+        ]
+    },
+    {
+        "id": "e88f2c01.64d71",
+        "type": "ui_text",
+        "z": "a8193508.52fbd8",
+        "group": "fad07ad1.a0beb8",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "Pool Pump",
+        "label": "Pool Pump: ",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1110,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "b02004c.50382f8",
+        "type": "ui_switch",
+        "z": "a8193508.52fbd8",
+        "name": "Pool Pump (auto)",
+        "label": "Pool Pump (Auto)",
+        "group": "fad07ad1.a0beb8",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "decouple": "false",
+        "topic": "PoolAuto",
+        "style": "",
+        "onvalue": "on",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "off",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "x": 290,
+        "y": 20,
+        "wires": [
+            [
+                "3e73616.c46dc9e"
+            ]
+        ]
+    },
+    {
+        "id": "3e73616.c46dc9e",
+        "type": "change",
+        "z": "a8193508.52fbd8",
+        "name": "Set PoolAuto Global",
+        "rules": [
+            {
+                "t": "set",
+                "p": "PoolAuto",
+                "pt": "global",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 520,
+        "y": 60,
+        "wires": [
+            [
+                "2402048f.d6f11c"
+            ]
+        ]
+    },
+    {
+        "id": "c17b66be.3b0c88",
+        "type": "change",
+        "z": "a8193508.52fbd8",
+        "name": "Set PoolPumpManual",
+        "rules": [
+            {
+                "t": "set",
+                "p": "PoolPumpManual",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 520,
+        "y": 140,
+        "wires": [
+            [
+                "c9d863b9.f7832"
+            ]
+        ]
+    },
+    {
+        "id": "2dcdb611.e98f9a",
+        "type": "debug",
+        "z": "a8193508.52fbd8",
+        "name": "Pump Direct",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 640,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "d220be39.97497",
+        "type": "change",
+        "z": "a8193508.52fbd8",
+        "name": "Set TimeRemainPool",
+        "rules": [
+            {
+                "t": "set",
+                "p": "TimeRemainPool",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 740,
+        "y": 780,
+        "wires": [
+            [
+                "8161f5ce.d3ae38",
+                "d42098ba.9427f8"
+            ]
+        ]
+    },
+    {
+        "id": "1f5f4bc2.26dd44",
+        "type": "debug",
+        "z": "a8193508.52fbd8",
+        "name": "Updated Daily Target",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 960,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "9f209aef.38c758",
+        "type": "debug",
+        "z": "a8193508.52fbd8",
+        "name": "Count Down",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 730,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "ecb6bf56.dea75",
+        "type": "switch",
+        "z": "a8193508.52fbd8",
+        "name": "Filter",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gte",
+                "v": "0",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 570,
+        "y": 720,
+        "wires": [
+            [
+                "d220be39.97497"
+            ]
+        ]
+    },
+    {
+        "id": "8161f5ce.d3ae38",
+        "type": "function",
+        "z": "a8193508.52fbd8",
+        "name": "Time Completed",
+        "func": "var TimeRemainPoolStart = flow.get(\"TimeRemainPoolStart\");\nvar TimeRemainPool = flow.get(\"TimeRemainPool\");\nvar TimeCompletedPool = 0;\nTimeCompletedPool = (TimeRemainPoolStart - TimeRemainPool)/60;\nmsg.payload = TimeCompletedPool;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1000,
+        "y": 840,
+        "wires": [
+            [
+                "dfddae23.82d04"
+            ]
+        ]
+    },
+    {
+        "id": "dfddae23.82d04",
+        "type": "ui_text",
+        "z": "a8193508.52fbd8",
+        "group": "fad07ad1.a0beb8",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "Pool Time Completed",
+        "label": "Pool Time Completed:",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "x": 1240,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "d42098ba.9427f8",
+        "type": "range",
+        "z": "a8193508.52fbd8",
+        "minin": "0",
+        "maxin": "60",
+        "minout": "0",
+        "maxout": "1",
+        "action": "scale",
+        "round": false,
+        "property": "payload",
+        "name": "Sec to Min",
+        "x": 1040,
+        "y": 760,
+        "wires": [
+            [
+                "7f301e33.ebd37"
+            ]
+        ]
+    },
+    {
+        "id": "fad07ad1.a0beb8",
+        "type": "ui_group",
+        "z": "",
+        "name": "POOL CONTROLLER",
+        "tab": "aa7a6127.8d57f",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "46ae9f89.2d1cf",
+        "type": "mqtt-broker",
+        "z": "",
+        "broker": "192.168.1.140",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "7a9c073e.1ce2c8",
+        "type": "sqlitedb",
+        "z": "",
+        "db": "/usr/local/iot/sensordata.db"
+    },
+    {
+        "id": "aa7a6127.8d57f",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Pool Controller",
+        "icon": "dashboard",
+        "order": 2
+    }
+]

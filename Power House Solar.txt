@@ -1,0 +1,243 @@
+[
+    {
+        "id": "361642ef.93afee",
+        "type": "tab",
+        "label": "Power House Solar",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "8308dc79.9e3ea",
+        "type": "emoncms in",
+        "z": "361642ef.93afee",
+        "name": "Emoncms House W",
+        "emonServer": "f440c437.12e128",
+        "feedid": "6",
+        "x": 321,
+        "y": 95,
+        "wires": [
+            [
+                "60cff80e.468788"
+            ]
+        ]
+    },
+    {
+        "id": "4dd07a21.5a4df4",
+        "type": "debug",
+        "z": "361642ef.93afee",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "false",
+        "x": 871,
+        "y": 75,
+        "wires": []
+    },
+    {
+        "id": "3e4e64e.8ca7c9c",
+        "type": "inject",
+        "z": "361642ef.93afee",
+        "name": "10 Second Trigger",
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "x": 132,
+        "y": 27,
+        "wires": [
+            [
+                "8308dc79.9e3ea",
+                "6c06ca93.92bd04",
+                "543e62e6.b14dcc"
+            ]
+        ]
+    },
+    {
+        "id": "6c06ca93.92bd04",
+        "type": "emoncms in",
+        "z": "361642ef.93afee",
+        "name": "Emoncms Solar W",
+        "emonServer": "f440c437.12e128",
+        "feedid": "18",
+        "x": 297,
+        "y": 151,
+        "wires": [
+            [
+                "50854743.0d1798"
+            ]
+        ]
+    },
+    {
+        "id": "b14020cc.e6d53",
+        "type": "debug",
+        "z": "361642ef.93afee",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "false",
+        "x": 870,
+        "y": 149,
+        "wires": []
+    },
+    {
+        "id": "60cff80e.468788",
+        "type": "function",
+        "z": "361642ef.93afee",
+        "name": "Global Var House W",
+        "func": "global.set(\"HouseW\",msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 552,
+        "y": 91,
+        "wires": [
+            [
+                "4dd07a21.5a4df4"
+            ]
+        ]
+    },
+    {
+        "id": "50854743.0d1798",
+        "type": "function",
+        "z": "361642ef.93afee",
+        "name": "Global Var Solar W",
+        "func": "global.set(\"SolarW\",msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 522,
+        "y": 150,
+        "wires": [
+            [
+                "b14020cc.e6d53"
+            ]
+        ]
+    },
+    {
+        "id": "543e62e6.b14dcc",
+        "type": "function",
+        "z": "361642ef.93afee",
+        "name": "Net Power",
+        "func": "var HouseW = parseFloat(global.get(\"HouseW\",msg.payload));\nvar SolarW = parseFloat(global.get(\"SolarW\",msg.payload));\nvar NetPowerW = 0;\nNetPowerW = SolarW - HouseW;\nglobal.set(\"NetPowerW\",NetPowerW);\nmsg.payload = NetPowerW;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 270,
+        "y": 230,
+        "wires": [
+            [
+                "87fa42f7.337b7",
+                "1824927e.f77f7e",
+                "27c7c807.94d8d8"
+            ]
+        ]
+    },
+    {
+        "id": "87fa42f7.337b7",
+        "type": "debug",
+        "z": "361642ef.93afee",
+        "name": "NetPower",
+        "active": true,
+        "console": "false",
+        "complete": "payload",
+        "x": 484,
+        "y": 223,
+        "wires": []
+    },
+    {
+        "id": "1824927e.f77f7e",
+        "type": "smooth",
+        "z": "361642ef.93afee",
+        "name": "3 minute",
+        "action": "mean",
+        "count": "18",
+        "round": "",
+        "mult": "single",
+        "x": 483,
+        "y": 289,
+        "wires": [
+            [
+                "205880f7.9e44"
+            ]
+        ]
+    },
+    {
+        "id": "dc930846.523e08",
+        "type": "debug",
+        "z": "361642ef.93afee",
+        "name": "NetPowerAvg3 minute",
+        "active": true,
+        "console": "false",
+        "complete": "payload",
+        "x": 924,
+        "y": 288,
+        "wires": []
+    },
+    {
+        "id": "205880f7.9e44",
+        "type": "function",
+        "z": "361642ef.93afee",
+        "name": "Net Power Avg 3 minute",
+        "func": "global.set(\"NetPowerAvg3\",msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 680,
+        "y": 289,
+        "wires": [
+            [
+                "dc930846.523e08"
+            ]
+        ]
+    },
+    {
+        "id": "27c7c807.94d8d8",
+        "type": "smooth",
+        "z": "361642ef.93afee",
+        "name": "Minimum - 5 min",
+        "action": "min",
+        "count": "30",
+        "round": "",
+        "mult": "single",
+        "x": 502,
+        "y": 371,
+        "wires": [
+            [
+                "984c4466.b80518"
+            ]
+        ]
+    },
+    {
+        "id": "dc6a6f42.9cd1d",
+        "type": "debug",
+        "z": "361642ef.93afee",
+        "name": "Minimum - 5 min",
+        "active": false,
+        "console": "false",
+        "complete": "payload",
+        "x": 995,
+        "y": 371,
+        "wires": []
+    },
+    {
+        "id": "984c4466.b80518",
+        "type": "function",
+        "z": "361642ef.93afee",
+        "name": "Net Power Minimum 5 minute",
+        "func": "global.set(\"NetPowerMin5\",msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 769,
+        "y": 372,
+        "wires": [
+            [
+                "dc6a6f42.9cd1d"
+            ]
+        ]
+    },
+    {
+        "id": "f440c437.12e128",
+        "type": "emoncms-server",
+        "z": "",
+        "server": "http://192.168.1.120/emoncms/",
+        "name": "EMON-Local"
+    }
+]
