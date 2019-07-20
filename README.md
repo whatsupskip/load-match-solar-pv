@@ -6,3 +6,5 @@ In the projects current form it obtains the solar power generated and the power 
 The current design uses an average of excess power (Solar PV - House Consumption) in the last few minutes to determine if the pool pump should be turned on, or if there is insufficient power, turn the pump off. Averaging the power levels is an attempt to prevent the pump turning on and off too frequently, for example a small cloud blocking the sun for a couple of minutes.
 
 The pool pump has a user set target run time per day. If this is not met, then the system will attempt to make up the short fall on the following days.
+
+Power House Solar.txt and Pool Control.txt contain Node-Red flows that can be imported.
